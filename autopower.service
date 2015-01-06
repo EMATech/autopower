@@ -1,0 +1,9 @@
+[Unit]
+Description=Automate powerered loudspeakers power with EATON UPS from Denon DN-500AV pre-amplifier state
+After=network.target nut-monitor.service
+
+[Service]
+ExecStart=/usr/bin/python2 /opt/autopower/autopower.py
+
+[Install]
+WantedBy=multi-user.target
