@@ -16,19 +16,18 @@ class DenonProtocol(TelnetProtocol):
     ups_username = 'admin'  # TODO: store in a configuration file
     ups_userpass = 'ups'  # TODO: store securely? in a configuration file
 
-    ups = PyNUTClient(login=ups_username, password=ups_userpass)
-
     def connectionMade(self):
         # Subscribe to the power state
         self.transport.write("PW?\n")
 
     def dataReceived(self, bytes):
+        ups = PyNUTClient(login=self.ups_username, password=self.ups_userpass)
         if 'PWON' in bytes:
             # Enable UPS sockets
-            self.ups.SetRWVar(ups=self.ups_name, var=self.ups_var, value='no')
+            ups.SetRWVar(ups=self.ups_name, var=self.ups_var, value='no')
         if 'PWSTANDBY' in bytes:
             # Disable UPS sockets
-            self.ups.SetRWVar(ups=self.ups_name, var=self.ups_var, value='yes')
+            ups.SetRWVar(ups=self.ups_name, var=self.ups_var, value='yes')
 
 
 class TelnetFactory(ClientFactory):
