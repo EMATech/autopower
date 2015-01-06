@@ -7,25 +7,33 @@ Automate powerered loudspeakers power with EATON UPS from Denon DN-500AV pre-amp
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 from twisted.conch.telnet import TelnetTransport, TelnetProtocol  # Unavailable in Python3, yet
+from PyNUT import PyNUTClient
 
 
-class TelnetPrinter(TelnetProtocol):
+class DenonProtocol(TelnetProtocol):
+    ups_name = 'nutdev1'  # TODO: store in a configuration file
+    ups_var = "outlet.2.switchable"  # on means power down or off power up
+    ups_username = 'admin'  # TODO: store in a configuration file
+    ups_userpass = 'ups'  # TODO: store securely? in a configuration file
+
+    ups = PyNUTClient(login=ups_username, password=ups_userpass)
+
     def connectionMade(self):
+        # Subscribe to the power state
         self.transport.write("PW?\n")
 
     def dataReceived(self, bytes):
-        print('Received:', repr(bytes))
-        if bytes == 'PWON':
-            print('Power is ON')
-            # TODO: Enable UPS sockets
-        if bytes == 'PWSTANDBY':
-            print('Power is STANDBY')
-            # TODO: Disable UPS sockets
+        if 'PWON' in bytes:
+            # Enable UPS sockets
+            self.ups.SetRWVar(ups=self.ups_name, var=self.ups_var, value='no')
+        if 'PWSTANDBY' in bytes:
+            # Disable UPS sockets
+            self.ups.SetRWVar(ups=self.ups_name, var=self.ups_var, value='yes')
 
 
 class TelnetFactory(ClientFactory):
     def buildProtocol(self, addr):
-        return TelnetTransport(TelnetPrinter)
+        return TelnetTransport(DenonProtocol)
 
 
 if __name__ == '__main__':
