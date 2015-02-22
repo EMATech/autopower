@@ -1,5 +1,5 @@
 [Unit]
-Description=Automate powerered loudspeakers power with EATON UPS from Denon DN-500AV pre-amplifier state
+Description=Automate powered loudspeakers power with EATON UPS from Denon DN-500AV pre-amplifier state
 After=network.target nut-monitor.service
 
 [Service]

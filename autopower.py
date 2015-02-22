@@ -1,7 +1,7 @@
 #!/bin/env python2
 
 """
-Automate powerered loudspeakers power with EATON UPS from Denon DN-500AV pre-amplifier state
+Automate powered loudspeakers power with EATON UPS from Denon DN-500AV pre-amplifier state
 """
 
 from twisted.internet import reactor
